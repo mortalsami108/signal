@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>link test</title>
+<style>
+body{font-family:system-ui;margin:0;padding:18px;background:#111;color:#eee}
+a{display:block;background:#3a76f0;color:#fff;text-decoration:none;padding:15px;border-radius:10px;margin:10px 0;text-align:center;font-weight:600}
+img{width:220px;height:220px;background:#fff;padding:10px;border-radius:10px;display:block;margin:14px auto}
+pre{font-size:10px;word-break:break-all;white-space:pre-wrap;color:#888}
+</style></head><body>
+<h3>Link tests</h3>
+<div id="box">loading…</div>
+<script>
+(async function () {
+  var sid = (await (await fetch('/start')).json()).sid;
+  for (var i = 0; i < 40; i++) {
+    var s = await (await fetch('/state/' + sid)).json();
+    if (s.state === 'ready') {
+      var q = s.uri.split('?')[1];
+      var box = document.getElementById('box');
+      box.innerHTML = '';
+      var a1 = document.createElement('a');
+      a1.href = s.uri; a1.textContent = '1. plain sgnl:// link';
+      box.appendChild(a1);
+      var a2 = document.createElement('a');
+      a2.href = 'intent://linkdevice?' + q + '#Intent;scheme=sgnl;package=org.thoughtcrime.securesms;end';
+      a2.textContent = '2. intent:// to Signal package';
+      box.appendChild(a2);
+      var im = document.createElement('img'); im.src = s.qr;
+      box.appendChild(im);
+      var p = document.createElement('pre'); p.textContent = s.uri;
+      box.appendChild(p);
+      return;
+    }
+    await new Promise(r => setTimeout(r, 700));
+  }
+  document.getElementById('box').textContent = 'timed out';
+})();
+</script></body></html>
