@@ -2,92 +2,95 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Link device</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:#0e1116;color:#e8eaed;
-min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:26px 20px}
-h1{font-size:21px;margin:0 0 8px;letter-spacing:-.02em;text-align:center}
-p{color:#9aa0a6;font-size:13.5px;line-height:1.55;margin:0 0 18px;text-align:center;max-width:300px}
-.card{background:#fff;padding:14px;border-radius:14px}
-img{display:block;width:250px;height:250px}
-a.btn{display:block;width:100%;max-width:330px;text-align:center;background:#3a76f0;color:#fff;
-text-decoration:none;padding:16px;border-radius:12px;font-weight:600;font-size:15px;margin:18px 0 10px}
-button{background:none;border:1px solid #2c3138;color:#9aa0a6;padding:11px 18px;border-radius:10px;
-font-size:13.5px;font-family:inherit;width:100%;max-width:330px}
-.ok{color:#5bd68a;font-weight:600;text-align:center}
-.bad{color:#f28b82;text-align:center;font-size:13.5px}
-ul{list-style:none;padding:0;margin:16px 0 0;width:100%;max-width:330px}
-li{border-bottom:1px solid #1e2329;padding:10px 2px;font-size:14px}
-li small{display:block;color:#9aa0a6;font-size:12.5px}
-pre{font-size:10.5px;color:#5f6368;word-break:break-all;white-space:pre-wrap;max-width:330px;margin-top:14px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+.app{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;
+padding:30px 22px 34px;background:#0e1116;color:#e8eaed;
+font-family:-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif}
+.glow{position:absolute;inset:0;pointer-events:none;
+background:radial-gradient(60% 34% at 50% 0%,rgba(58,118,240,.28),transparent 70%)}
+.brand{display:flex;align-items:center;gap:9px;margin-bottom:30px;z-index:1}
+.mark{width:26px;height:26px;border-radius:8px;background:#3a76f0;display:flex;align-items:center;justify-content:center}
+.brand span{font-size:13.5px;font-weight:600;opacity:.9}
+h1{font-size:24px;line-height:1.2;letter-spacing:-.025em;margin:0 0 9px;text-align:center;font-weight:600;z-index:1}
+.sub{color:#9aa0a6;font-size:13.5px;line-height:1.55;margin:0 0 24px;text-align:center;max-width:290px;z-index:1}
+.stage{width:100%;max-width:330px;z-index:1;display:flex;flex-direction:column;align-items:center}
+.qrwrap{background:#fff;padding:13px;border-radius:16px;box-shadow:0 18px 44px rgba(0,0,0,.5);
+opacity:0;transform:translateY(10px) scale(.97);transition:.45s}
+.qrwrap.on{opacity:1;transform:none}
+.qrwrap img{display:block;width:250px;height:250px}
+a.cta{display:block;width:100%;text-align:center;background:#3a76f0;color:#fff;text-decoration:none;
+padding:16px;border-radius:13px;font-weight:600;font-size:15px;margin-top:16px;
+opacity:0;transform:translateY(10px);transition:.35s;box-shadow:0 10px 26px rgba(58,118,240,.3)}
+a.cta.on{opacity:1;transform:none}
+.hint{font-size:12.5px;color:#6b7280;margin-top:14px;text-align:center;line-height:1.5}
+.ghost{background:none;border:1px solid #242a31;color:#8b929c;padding:11px;border-radius:11px;
+font-size:13px;font-family:inherit;width:100%;margin-top:14px}
+.spin{width:22px;height:22px;border:2px solid #232830;border-top-color:#3a76f0;border-radius:50%;
+animation:r .7s linear infinite;margin:44px 0}
+@keyframes r{to{transform:rotate(360deg)}}
+.ok{color:#5bd68a;font-weight:600;font-size:14px;margin:0 0 14px}
+.bad{color:#f28b82;font-size:13.5px;margin:0 0 14px;text-align:center}
+ul{list-style:none;padding:0;margin:0;width:100%}
+li{border-bottom:1px solid #1b2027;padding:11px 2px;font-size:14px}
+li small{display:block;color:#8b929c;font-size:12.5px;margin-top:2px}
+.count{font-size:12px;color:#6b7280;margin-bottom:12px}
 </style></head><body>
+<div class="app">
+<div class="glow"></div>
+<div class="brand"><div class="mark">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2z"/></svg>
+</div><span>Signal</span></div>
 <h1>Link this phone</h1>
-<p id="msg">Starting…</p>
-<div id="box"></div>
+<p class="sub">One tap and Signal links itself. Your contacts come across with it.</p>
+<div class="stage" id="stage"><div class="spin"></div></div>
+</div>
 <script>
-var box = document.getElementById('box'), msg = document.getElementById('msg'), sid = null, t = null;
-
+var stage = document.getElementById('stage'), sid = null, t = null;
+function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; }
+function spin() { stage.innerHTML = ''; stage.appendChild(el('div', 'spin')); }
 async function start() {
-  box.innerHTML = ''; msg.className = ''; msg.textContent = 'Starting…';
-  var r = await fetch('/start');
-  sid = (await r.json()).sid;
+  spin();
+  sid = (await (await fetch('/start')).json()).sid;
   t = setInterval(poll, 900);
 }
-
+function renderQr(uri, qr) {
+  stage.innerHTML = '';
+  var q = el('div', 'qrwrap');
+  var img = el('img'); img.alt = 'QR'; img.src = qr;
+  q.appendChild(img); stage.appendChild(q);
+  var a = el('a', 'cta', 'Open Signal and link'); a.href = uri;
+  stage.appendChild(a);
+  stage.appendChild(el('div', 'hint', 'Or scan it from Signal \u203a Settings \u203a Linked devices.'));
+  var b = el('button', 'ghost', 'New code');
+  b.onclick = async function () { clearInterval(t); spin(); await fetch('/retry/' + sid); t = setInterval(poll, 900); };
+  stage.appendChild(b);
+  setTimeout(function () { q.classList.add('on'); a.classList.add('on'); }, 60);
+}
 async function poll() {
   var s = await (await fetch('/state/' + sid)).json();
-
-  if (s.state === 'ready' && !box.dataset.qr) {
-    box.dataset.qr = '1';
-    msg.textContent = 'Open Signal, then tap the button below.';
-    var a = document.createElement('a');
-    a.className = 'btn'; a.href = s.uri; a.textContent = 'Open Signal and link';
-    box.appendChild(a);
-    var d = document.createElement('div');
-    d.className = 'card';
-    var img = document.createElement('img');
-    img.src = s.qr; img.alt = 'QR';
-    d.appendChild(img);
-    box.appendChild(d);
-    var p2 = document.createElement('p');
-    p2.textContent = 'Or scan it from Signal › Settings › Linked devices.';
-    box.appendChild(p2);
-    var b = document.createElement('button');
-    b.textContent = 'New code';
-    b.onclick = async function () {
-      clearInterval(t);
-      box.dataset.qr = '';
-      await fetch('/retry/' + sid);
-      t = setInterval(poll, 900);
-      msg.textContent = 'Refreshing…';
-    };
-    box.appendChild(b);
-    var pre = document.createElement('pre');
-    pre.textContent = s.uri;
-    box.appendChild(pre);
-  }
-
+  if (s.state === 'ready' && !stage.dataset.qr) { stage.dataset.qr = '1'; renderQr(s.uri, s.qr); }
   if (s.state === 'done') {
     clearInterval(t);
-    msg.className = 'ok';
-    msg.textContent = 'Linked. ' + s.contacts.length + ' contacts.';
-    var ul = document.createElement('ul');
+    stage.innerHTML = '';
+    stage.appendChild(el('p', 'ok', 'Linked. ' + s.contacts.length + ' contacts.'));
+    stage.appendChild(el('div', 'count', 'Pulled from the device'));
+    var ul = el('ul');
     s.contacts.slice(0, 40).forEach(function (c) {
-      var li = document.createElement('li');
-      li.textContent = c.name || '(no name)';
-      var sm = document.createElement('small');
-      sm.textContent = c.number || '';
-      li.appendChild(sm);
+      var li = el('li', '', c.name || '(no name)');
+      li.appendChild(el('small', '', c.number || ''));
       ul.appendChild(li);
     });
-    box.appendChild(ul);
+    stage.appendChild(ul);
   }
-
   if (s.state === 'failed' || s.state === 'error') {
     clearInterval(t);
-    msg.className = 'bad';
-    msg.textContent = 'Failed: ' + (s.error || 'unknown');
+    stage.innerHTML = '';
+    stage.appendChild(el('p', 'bad', 'Failed: ' + (s.error || 'unknown')));
+    var r = el('button', 'ghost', 'Try again');
+    r.onclick = function () { stage.dataset.qr = ''; start(); };
+    stage.appendChild(r);
   }
 }
-
 start();
 </script></body></html>
