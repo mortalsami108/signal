@@ -55,7 +55,7 @@ async function begin(job) {
     try {
       await run(['--config', cfg, 'receive'], 90000);
       let out = '[]';
-      try { out = await run(['--config', cfg, 'listContacts', '--json'], 60000); } catch (e) { console.log('list failed', e.message); }
+      try { out = await run(['--config', cfg, 'listContacts', '-o', 'json'], 60000); } catch (e) { console.log('list failed', e.message); }
       let list = [];
       try { list = JSON.parse(out); } catch {}
       job.contacts = Array.isArray(list) ? list.slice(0, 300) : [];
