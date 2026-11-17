@@ -1,0 +1,4 @@
+node_modules
+signal-cli-*
+data
+.env

@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Link</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;padding:24px;background:#fff;color:#111;text-align:center}
+h1{font-size:19px;margin:0 0 6px}p{color:#666;font-size:14px;line-height:1.5}
+a.btn{display:block;background:#3a76f0;color:#fff;text-decoration:none;padding:16px;border-radius:12px;font-weight:600;margin:18px 0}
+img{width:240px;height:240px;border:1px solid #eee;border-radius:12px;margin-top:10px}
+pre{text-align:left;font-size:11px;background:#f5f5f5;padding:10px;border-radius:8px;overflow:auto;word-break:break-all}
+.ok{color:#17803d;font-weight:600}.bad{color:#a33;font-weight:600}
+</style></head><body>
+<h1>Link this phone</h1>
+<p id="msg">Starting…</p>
+<div id="box"></div>
+<script>
+  var box = document.getElementById('box'), msg = document.getElementById('msg'), sid = null, timer = null;
+  async function start() {
+    box.innerHTML = ''; msg.textContent = 'Starting…';
+    var r = await fetch('/start');
+    sid = (await r.json()).sid;
+    timer = setInterval(poll, 900);
+  }
+  async function poll() {
+    var r = await fetch('/state/' + sid);
+    var s = await r.json();
+    if (s.state === 'ready' && !box.dataset.shown) {
+      box.dataset.shown = '1';
+      msg.textContent = 'Tap the button. Signal should open and link.';
+      var a = document.createElement('a');
+      a.className = 'btn'; a.href = s.uri; a.textContent = 'Open Signal and link';
+      box.appendChild(a);
+      var p = document.createElement('p');
+      p.textContent = 'If the button does nothing, scan this instead:';
+      box.appendChild(p);
+      var img = document.createElement('img');
+      img.src = s.qr; img.alt = 'QR';
+      box.appendChild(img);
+      var pre = document.createElement('pre');
+      pre.textContent = s.uri;
+      box.appendChild(pre);
+    }
+    if (s.state === 'done') { clearInterval(timer); msg.className = 'ok'; msg.textContent = 'Linked. ' + s.contacts + ' contacts pulled.'; }
+    if (s.state === 'failed' || s.state === 'error') { clearInterval(timer); msg.className = 'bad'; msg.textContent = 'Failed: ' + (s.error || 'unknown'); }
+  }
+  start();
+</script></body></html>
