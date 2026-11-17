@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:25-jdk
 
 RUN apt-get update && apt-get install -y curl xz-utils \
  && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
