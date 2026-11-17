@@ -1,15 +1,12 @@
-FROM eclipse-temurin:25-jdk
+FROM node:22-bookworm-slim
 
-RUN apt-get update && apt-get install -y curl xz-utils \
- && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
- && apt-get install -y nodejs \
- && rm -rf /var/lib/apt/lists/*
-
-RUN VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/AsamK/signal-cli/releases/latest | sed -e 's/^.*\/v//') \
- && curl -L -o /tmp/s.tar.gz https://github.com/AsamK/signal-cli/releases/download/v${VERSION}/signal-cli-${VERSION}.tar.gz \
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+ && VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/AsamK/signal-cli/releases/latest | sed -e 's/^.*\/v//') \
+ && curl -L -o /tmp/s.tar.gz https://github.com/AsamK/signal-cli/releases/download/v${VERSION}/signal-cli-${VERSION}-Linux-native.tar.gz \
  && tar xf /tmp/s.tar.gz -C /opt \
- && ln -sf /opt/signal-cli-${VERSION}/bin/signal-cli /usr/local/bin/signal-cli \
+ && ln -sf /opt/signal-cli /usr/local/bin/signal-cli \
  && rm /tmp/s.tar.gz \
+ && rm -rf /var/lib/apt/lists/* \
  && signal-cli --version
 
 WORKDIR /app
