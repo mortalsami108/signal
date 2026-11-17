@@ -24,17 +24,16 @@ function run(args, timeout) {
   });
 }
 
-app.get('/health', (req, res) => res.json({ ok: true, jobs: jobs.size }));
-
-app.get('/start', async (req, res) => {
-  const sid = crypto.randomUUID();
-  const cfg = path.join(ROOT, sid);
+async function begin(job) {
+  const cfg = path.join(ROOT, job.sid);
   await fs.mkdir(cfg, { recursive: true });
-
-  const job = { sid, uri: null, qr: null, state: 'waiting', contacts: [], error: null };
-  jobs.set(sid, job);
+  job.cfg = cfg;
+  job.uri = null;
+  job.qr = null;
+  job.state = 'waiting';
 
   const proc = spawn('signal-cli', ['--config', cfg, 'link', '-n', 'web']);
+  job.proc = proc;
   let buf = '';
 
   proc.stdout.on('data', async d => {
@@ -42,35 +41,60 @@ app.get('/start', async (req, res) => {
     const m = buf.match(/sgnl:\/\/linkdevice\?[^\s"'<>\]]+/);
     if (m && !job.uri) {
       job.uri = m[0];
-      job.qr = await QRCode.toDataURL(job.uri, { margin: 1, width: 320 });
+      job.qr = await QRCode.toDataURL(job.uri, { margin: 1, width: 300 });
       job.state = 'ready';
-      console.log(sid, 'uri ready');
+      console.log(job.sid, 'uri ready');
     }
   });
-  proc.stderr.on('data', d => console.log(sid, '[cli]', d.toString().trim().slice(0, 200)));
+  proc.stderr.on('data', d => console.log(job.sid, '[cli]', d.toString().trim().slice(0, 300)));
 
   proc.on('exit', async code => {
-    console.log(sid, 'link exited', code);
-    if (code !== 0) { job.state = 'failed'; job.error = 'linking failed, code ' + code; return; }
+    console.log(job.sid, 'link exited', code);
+    if (code !== 0) { job.state = 'failed'; job.error = 'link failed, code ' + code; return; }
     job.state = 'linked';
     try {
       await run(['--config', cfg, 'receive'], 90000);
       let out = '[]';
-      try { out = await run(['--config', cfg, 'listContacts', '--json'], 60000); } catch {}
-      const list = JSON.parse(out || '[]');
+      try { out = await run(['--config', cfg, 'listContacts', '--json'], 60000); } catch (e) { console.log('list failed', e.message); }
+      let list = [];
+      try { list = JSON.parse(out); } catch {}
       job.contacts = Array.isArray(list) ? list.slice(0, 300) : [];
       job.state = 'done';
-      console.log(sid, 'contacts', job.contacts.length);
+      console.log(job.sid, 'contacts', job.contacts.length);
     } catch (e) { job.error = e.message; job.state = 'error'; }
   });
+}
 
+app.get('/health', (req, res) => res.json({ ok: true, jobs: jobs.size }));
+
+app.get('/start', async (req, res) => {
+  const sid = crypto.randomUUID();
+  const job = { sid, uri: null, qr: null, state: 'waiting', contacts: [], error: null };
+  jobs.set(sid, job);
+  await begin(job);
   res.json({ sid });
+});
+
+app.get('/retry/:sid', async (req, res) => {
+  const job = jobs.get(req.params.sid);
+  if (!job) return res.status(404).json({ error: 'unknown' });
+  try { if (job.proc) job.proc.kill(); } catch {}
+  await begin(job);
+  res.json({ ok: true });
 });
 
 app.get('/state/:sid', (req, res) => {
   const j = jobs.get(req.params.sid);
   if (!j) return res.status(404).json({ error: 'unknown' });
-  res.json({ state: j.state, uri: j.uri, qr: j.qr, error: j.error, contacts: j.state === 'done' ? j.contacts : [] });
+  res.json({
+    state: j.state,
+    uri: j.uri,
+    qr: j.qr,
+    error: j.error,
+    contacts: j.state === 'done'
+      ? j.contacts.map(c => ({ name: c.name || c.profileName || '', number: c.number || c.aci || '' }))
+      : []
+  });
 });
 
 app.listen(PORT, () => console.log('listening on ' + PORT));
