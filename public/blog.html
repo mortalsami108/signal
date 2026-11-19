@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The town that runs on one shared garden — The Quiet Column</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fbfaf8;color:#1a1a1a;font-family:Georgia,'Times New Roman',serif}
+.wrap{max-width:660px;margin:0 auto;padding:0 22px 90px}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid #e8e4dd;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+.logo{font-family:Georgia,serif;font-size:19px;font-weight:700}
+.logo i{font-style:italic;color:#8a6d3b}
+.logo a{text-decoration:none;color:inherit}
+.nav ul{display:flex;gap:20px;list-style:none;margin:0;padding:0;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:#8b8680}
+.cat{font-family:-apple-system,sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a6d3b;margin:44px 0 14px}
+h1{font-size:41px;line-height:1.1;letter-spacing:-.02em;margin:0 0 16px;font-weight:700}
+.dek{font-size:19px;line-height:1.5;color:#57534e;margin:0 0 26px;font-style:italic}
+.byline{display:flex;align-items:center;gap:11px;font-family:-apple-system,sans-serif;font-size:13px;color:#8b8680;padding-bottom:26px;border-bottom:1px solid #e8e4dd;margin-bottom:32px}
+.av{width:34px;height:34px;border-radius:50%;background:#e6e0d6;color:#7a5f33;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.byline b{color:#3a3733;font-weight:600}
+figure{margin:0 0 32px}
+.img{height:250px;border-radius:3px;background:radial-gradient(70% 90% at 20% 10%,#d9c9a8,transparent 60%),radial-gradient(80% 80% at 85% 30%,#a8b8a0,transparent 55%),linear-gradient(150deg,#cbb894,#8d9b83)}
+figcaption{font-family:-apple-system,sans-serif;font-size:12.5px;color:#9a948c;margin-top:9px;line-height:1.45}
+p{font-size:18px;line-height:1.72;margin:0 0 24px}
+p.drop::first-letter{float:left;font-size:62px;line-height:.82;padding:6px 10px 0 0;color:#8a6d3b;font-weight:700}
+h2{font-size:25px;line-height:1.25;margin:44px 0 14px}
+blockquote{margin:34px 0;padding:0 0 0 22px;border-left:3px solid #d9c9a8;font-size:20px;line-height:1.55;font-style:italic;color:#4a453e}
+.rule{height:1px;background:#e8e4dd;margin:40px 0}
+.tags{display:flex;gap:8px;flex-wrap:wrap;font-family:-apple-system,sans-serif;font-size:12px}
+.tags span{background:#f0ece5;color:#6b655d;padding:6px 11px;border-radius:99px}
+.letterbox{margin:44px 0 0;padding:24px;background:#f4f0e9;border-radius:4px;font-family:-apple-system,sans-serif}
+.letterbox h3{font-size:16px;margin:0 0 6px;font-family:Georgia,serif}
+.letterbox p{font-size:14px;color:#6b655d;margin:0 0 14px;line-height:1.5;font-family:-apple-system,sans-serif}
+.letterbox button{background:#1a1a1a;color:#fff;border:0;padding:12px 20px;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(28,26,22,.45);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:.22s;z-index:50}
+.ov.on{opacity:1;pointer-events:auto}
+.dlg{background:#fbfaf8;border-radius:4px;max-width:400px;width:100%;padding:30px 28px 26px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.28);transform:translateY(10px) scale(.98);transition:.22s}
+.ov.on .dlg{transform:none}
+.dlg .x{position:absolute;top:12px;right:14px;background:none;border:0;font-size:22px;color:#9a948c;cursor:pointer;line-height:1}
+.dlg .cat{font-family:-apple-system,sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6d3b;margin-bottom:10px}
+.dlg h2{font-size:24px;line-height:1.2;margin:0 0 10px;letter-spacing:-.015em}
+.dlg p{font-size:15px;line-height:1.55;margin:0 0 18px;color:#57534e}
+.dlg input{width:100%;font-family:-apple-system,sans-serif;font-size:15px;padding:12px 13px;border:1px solid #ddd8d0;border-radius:3px;background:#fff;margin-bottom:10px;outline:none}
+.dlg input:focus{border-color:#8a6d3b}
+.dlg .go{width:100%;background:#1a1a1a;color:#fff;border:0;padding:14px;font-family:-apple-system,sans-serif;font-size:14.5px;font-weight:600;border-radius:3px;cursor:pointer}
+.dlg .fine{font-family:-apple-system,sans-serif;font-size:11.5px;color:#9a948c;margin:12px 0 0;text-align:center}
+</style></head><body><div class="wrap">
+
+<div class="nav"><div class="logo"><a href="index.html">The <i>Quiet</i> Column</a></div>
+<ul><li>Notes</li><li>Field</li><li>Archive</li><li>About</li></ul></div>
+
+<div class="cat">Field Notes</div>
+<h1>The town that runs on one shared garden</h1>
+<p class="dek">Nobody owns the plot on Bream Street. Forty households take turns, and the rules are written in chalk on a board by the gate.</p>
+
+<div class="byline"><div class="av">HK</div>
+<div><b>Hana Kowalski</b> · 14 min read · 3 November</div></div>
+
+<figure><div class="img"></div>
+<figcaption>The plot at six in the morning, before the first shift arrives. Photo by the author.</figcaption></figure>
+
+<p class="drop">The chalkboard by the gate lists names, not rules. Tomasz has Wednesday mornings. Mira and her son have Saturday afternoons. A line at the bottom reads, in careful handwriting, "leave the hose coiled."</p>
+
+<p>It started as a fight over a strip of grass nobody could be bothered to mow. Twelve years later the same strip grows tomatoes for most of the street, and the fight is remembered as the best thing that happened to it.</p>
+
+<h2>What the board actually does</h2>
+
+<p>Anyone can write their name. Anyone can cross out somebody else's, but only with a reason written beside it. The board is the whole system — no committee, no minutes, no treasurer. If your reason is bad, the next person writes theirs underneath.</p>
+
+<blockquote>"We tried a group chat for a month. The board won because you can't mute a board."</blockquote>
+
+<p>When I asked whether the arrangement had ever collapsed, three people gave the same answer in different words: it collapses every spring, and every spring somebody re-chalks it.</p>
+
+<div class="letterbox">
+<h3>One letter a week</h3>
+<p>Four minutes of reading, nothing else. Worth a try?</p>
+<button id="open">Get the letter</button>
+</div>
+
+<div class="rule"></div>
+<div class="tags"><span>Community</span><span>Cities</span><span>Long reads</span></div>
+</div>
+
+<div class="ov" id="ov">
+<div class="dlg" role="dialog" aria-modal="true">
+<button class="x" aria-label="Close">&times;</button>
+<div class="cat">The Quiet Column</div>
+<h2>Where should we send it?</h2>
+<p>One letter, Fridays. Unsubscribe whenever.</p>
+<input type="email" placeholder="you@example.com" autocomplete="email">
+<button class="go">Subscribe</button>
+<div class="fine">No spam, no forwarding.</div>
+</div>
+</div>
+<script src="popup.js"></script>
+</body></html>
